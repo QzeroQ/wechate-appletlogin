@@ -15,6 +15,6 @@
         "laravel": ">=5.5.0"
     },
     "psr-4": {
-        "Wechat\\Appletlogin\\": "packages/wechat-appletlogin/src"
+        "Wechat\\Appletlogin\\": "src/"
     }
 }
