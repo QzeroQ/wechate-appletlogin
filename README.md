@@ -6,7 +6,7 @@
 ```php
 composer require wechate/appletlogin
 ```
-2. 进入laravel项目根目录的config/app.config,添加服务并设置别名
+2. 进入laravel项目根目录的config/app.config；添加服务并设置别名
 
 ```php
 'providers' => [
