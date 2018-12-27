@@ -7,21 +7,10 @@ namespace Wechat\Appletlogin;
  */
 class WxLogin
 {
-    protected  $appid;
-    protected  $app_secret;
+    protected $appid;
+    protected $app_secret;
     const URL = 'https://api.weixin.qq.com/sns/jscode2session';
 
-    /**
-     * 构造函数
-     * @param $appid string 小程序的appid
-     * @param $app_secret string 小程序的app_secret
-     */
-//    public function __construct($appid,$app_secret)
-//    {
-//
-//        $this->appid = $appid;
-//        $this->app_secret = $app_secret;
-//    }
 
     /**
      * 执行登陆授权
@@ -53,10 +42,10 @@ class WxLogin
         $code = $getData['code'];
         $encryptedData = $getData['encryptedData'];
         $iv = $getData['iv'];
-        $appid=$this->appid;
-        $app_secret=$this->app_secret;
+        $appid = $this->appid;
+        $app_secret = $this->app_secret;
 
-        $response=$this->send_request(self::URL,[
+        $response = $this->send_request(self::URL, [
             'appid' => $appid,
             'secret' => $app_secret,
             'js_code' => $code,
@@ -65,7 +54,7 @@ class WxLogin
         $data = json_decode($response, true);
         $sessionKey = $data['session_key'];
         $openid = $data['openid'];
-        $unionid = isset($data['unionid'])?$data['unionid']:'';
+        $unionid = isset($data['unionid']) ? $data['unionid'] : '';
         // 返回结果
         $result = [];
 
@@ -73,7 +62,7 @@ class WxLogin
         $errCode = $pc->decryptData($encryptedData, $iv, $result);
 
         if ($errCode != 0) {
-            $this->err('解析失败代码：' . $errCode);
+          return  $this->err('解析失败代码：' . $errCode);
         }
 
         $result = json_decode($result, true);
@@ -81,8 +70,6 @@ class WxLogin
         $result['unionid'] = $unionid;
         return $result;
     }
-
-
 
 
     public function send_request($url, $data)
@@ -96,11 +83,20 @@ class WxLogin
         curl_setopt($ch, CURLOPT_HEADER, 0);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-        try{
+        try {
             $ret = curl_exec($ch);
-        } finally{
+        } finally {
             curl_close($ch);
             return $ret;
         }
+    }
+
+    private function err($msg)
+    {
+        return json_encode([
+            'result' => -1,
+            'errmsg' => $msg,
+            'data' => []
+        ], JSON_UNESCAPED_UNICODE);
     }
 }
